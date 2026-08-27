@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { expectHomePage } from '../helpers/assertions';
 import { HeaderPage } from '../pages/header.page';
 
 /**
@@ -9,7 +10,7 @@ import { HeaderPage } from '../pages/header.page';
 test.describe('Logout', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('Transfer by phone number')).toBeVisible();
+    await expectHomePage(page);
   });
 
   test('TC-LOGOUT-01: выход из системы', {

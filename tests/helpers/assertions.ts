@@ -14,3 +14,21 @@ export async function expectHeaderBalance(page: Page, amount?: string | number) 
   }
   await expect(header).toContainText(`Balance: ${amount}`);
 }
+
+export async function expectHomePage(page: Page) {
+  await expect(page).toHaveURL('/');
+  await expect(page.locator('input[name="phone"]')).toBeVisible();
+  await expect(page.locator('input[name="amount"]')).toBeVisible();
+  await expectHeaderBalance(page);
+}
+
+export function watchForDialogs(page: Page) {
+  let dialogShown = false;
+  page.on('dialog', async (dialog) => {
+    dialogShown = true;
+    await dialog.dismiss();
+  });
+  return {
+    expectNone: () => expect(dialogShown, 'XSS dialog must not appear').toBe(false),
+  };
+}

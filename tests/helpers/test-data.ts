@@ -11,7 +11,12 @@ export const INVALID_EMAIL = 'not-an-email';
 export const INVALID_EMAIL_FORMAT = 'user@';
 export const UNKNOWN_EMAIL = 'nobody@test.com';
 export const WRONG_PASSWORD = 'wrong-password';
+/** sql-injection payload в email */
 export const SQL_INJECTION_EMAIL = "' OR 1=1 --";
+/** XSS/HTML payload в email */
+export const HTML_INJECTION_EMAIL = '<script>alert("xss")</script>';
+/** CSS-injection payload в email */
+export const CSS_INJECTION_EMAIL = 'test@test.com"><style>body{display:none}</style>';
 
 /** HTTP-статусы ответов API */
 export const HTTP_OK = 200;

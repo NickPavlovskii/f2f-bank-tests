@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { expectHeaderBalance, expectSnackbar } from '../helpers/assertions';
+import { expectHomePage, expectSnackbar, watchForDialogs } from '../helpers/assertions';
 import { clearSession, registerUser } from '../helpers/auth-helpers';
 import {
+  CSS_INJECTION_EMAIL,
+  HTML_INJECTION_EMAIL,
   INVALID_EMAIL_FORMAT,
   SQL_INJECTION_EMAIL,
   TEST_PASSWORD,
@@ -18,14 +20,14 @@ test.describe('Login', () => {
   /**
    * TC-LOGIN-01 | Критический
    * Вход: email и пароль зарегистрированного пользователя
-   * Результат: URL `/`, форма Transfer, Balance в шапке
+   * Результат: URL `/`, форма перевода (phone/amount), Balance в шапке
    */
   test('TC-LOGIN-01: успешный вход', {
     tag: ['@critical', '@login'],
     annotation: [
       { type: 'priority', description: 'Критический' },
       { type: 'input', description: 'email и пароль зарегистрированного пользователя' },
-      { type: 'expected', description: 'URL /, форма Transfer, Balance в шапке' },
+      { type: 'expected', description: 'URL /, форма phone/amount, Balance в шапке' },
     ],
   }, async ({ page }) => {
     const user = await registerUser(page);
@@ -33,9 +35,7 @@ test.describe('Login', () => {
 
     await loginPage.login(user.email, user.password);
 
-    await expect(page).toHaveURL('/');
-    await expect(page.getByText('Transfer by phone number')).toBeVisible();
-    await expectHeaderBalance(page);
+    await expectHomePage(page);
   });
 
   /**
@@ -105,27 +105,25 @@ test.describe('Login', () => {
   /**
    * TC-LOGIN-09 | Высокий
    * Вход: успешный вход, затем reload `/`
-   * Результат: остаёмся на `/`, Balance виден
+   * Результат: остаёмся на `/`, форма и Balance видны
    */
   test('TC-LOGIN-09: сессия сохраняется после reload', {
     tag: ['@high', '@login'],
     annotation: [
       { type: 'priority', description: 'Высокий' },
       { type: 'input', description: 'успешный вход, затем reload /' },
-      { type: 'expected', description: 'остаёмся на /, Balance виден' },
+      { type: 'expected', description: 'остаёмся на /, форма и Balance видны' },
     ],
   }, async ({ page }) => {
     const user = await registerUser(page);
     const loginPage = new LoginPage(page);
 
     await loginPage.login(user.email, user.password);
-    await expect(page).toHaveURL('/');
+    await expectHomePage(page);
 
     await page.reload();
 
-    await expect(page).toHaveURL('/');
-    await expect(page.getByText('Transfer by phone number')).toBeVisible();
-    await expectHeaderBalance(page);
+    await expectHomePage(page);
   });
 
   /**
@@ -147,6 +145,54 @@ test.describe('Login', () => {
 
     await expectSnackbar(page, 'Login failed');
     await expect(page).toHaveURL(/\/login/);
+  });
+
+  /**
+   * TC-LOGIN-11 | Высокий
+   * Вход: HTML/XSS payload в email (`<script>…</script>`)
+   * Результат: нет JS-диалога, входа нет, URL `/login`
+   * (type=email может заблокировать submit до API — это тоже ок)
+   */
+  test('TC-LOGIN-11: HTML-инъекция в поле email', {
+    tag: ['@high', '@login', '@security'],
+    annotation: [
+      { type: 'priority', description: 'Высокий' },
+      { type: 'input', description: `email ${HTML_INJECTION_EMAIL}` },
+      { type: 'expected', description: 'нет XSS-диалога, URL /login, входа нет' },
+    ],
+  }, async ({ page }) => {
+    const dialogs = watchForDialogs(page);
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.login(HTML_INJECTION_EMAIL, TEST_PASSWORD);
+
+    dialogs.expectNone();
+    await expect(page).toHaveURL(/\/login/);
+    await expect(loginPage.heading).toBeVisible();
+  });
+
+  /**
+   * TC-LOGIN-12 | Высокий
+   * Вход: CSS-injection payload в email
+   * Результат: нет XSS-диалога, входа нет, страница логина не «сломана» стилями атаки
+   */
+  test('TC-LOGIN-12: CSS-инъекция в поле email', {
+    tag: ['@high', '@login', '@security'],
+    annotation: [
+      { type: 'priority', description: 'Высокий' },
+      { type: 'input', description: `email ${CSS_INJECTION_EMAIL}` },
+      { type: 'expected', description: 'нет XSS-диалога, URL /login, форма логина видна' },
+    ],
+  }, async ({ page }) => {
+    const dialogs = watchForDialogs(page);
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.login(CSS_INJECTION_EMAIL, TEST_PASSWORD);
+
+    dialogs.expectNone();
+    await expect(page).toHaveURL(/\/login/);
+    await expect(loginPage.emailInput).toBeVisible();
+    await expect(loginPage.heading).toBeVisible();
   });
 
   /**
