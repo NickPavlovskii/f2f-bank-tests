@@ -25,7 +25,7 @@ export default defineConfig({
     {
       name: 'logged-in',
       testDir: './tests/logged-in',
-      testMatch: /\/(logout|api)\.spec\.ts/,
+      testMatch: /\/(logout|api|profile|nav)\.spec\.ts/,
       dependencies: ['setup'],
       use: {
         ...devices['Desktop Chrome'],

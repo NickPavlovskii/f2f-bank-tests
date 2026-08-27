@@ -2,6 +2,8 @@ import type { TestUser } from './types';
 
 /** Путь к storageState после login.setup.ts */
 export const AUTH_FILE = 'playwright/.auth/user.json';
+/** Данные пользователя из login.setup.ts  */
+export const SETUP_USER_FILE = 'playwright/.auth/setup-user.json';
 
 export const TEST_PASSWORD = 'Qwerty123!';
 export const TEST_USER_NAME = 'Nick';
