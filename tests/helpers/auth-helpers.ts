@@ -55,7 +55,6 @@ export async function clearSession(page: Page) {
 
 /**
  * Удаляет пользователя из Postgres (публичного DELETE /users нет).
- * balance/transaction чистятся CASCADE. Best-effort: ошибки глотаем.
  */
 export async function deleteTestUser(email: string): Promise<void> {
   const escaped = email.replace(/'/g, "''");

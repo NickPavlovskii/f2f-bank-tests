@@ -1,9 +1,7 @@
 import type { Page, Request, Response } from '@playwright/test';
 import { expect } from '@playwright/test';
+import { AUTH_API } from './test-data';
 
-const AUTH_API = /\/api\/auth\/(login|register)/;
-
-/** Считает POST login/register; после проверки вызывайте dispose() */
 export function trackAuthApiCalls(page: Page) {
   const urls: string[] = [];
   const onRequest = (req: Request) => {

@@ -25,6 +25,9 @@ export const HTTP_BAD_REQUEST = 400;
 export const HTTP_UNAUTHORIZED = 401;
 export const HTTP_UNPROCESSABLE = 422;
 
+/** POST login/register — для трекинга сетевых вызовов */
+export const AUTH_API = /\/api\/auth\/(login|register)/;
+
 /** Сколько неудачных логинов проверяем на отсутствие lockout */
 export const FAILED_LOGIN_ATTEMPTS = 10;
 

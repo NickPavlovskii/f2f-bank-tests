@@ -3,6 +3,11 @@ import { fetchProtectedUserApis } from '../helpers/api-helpers';
 import { HTTP_OK } from '../helpers/test-data';
 
 test.describe('Authenticated API', () => {
+  /**
+   * TC-API-01 | Высокий
+   * Вход: GET /api/users/current, /balance, /transactions с cookie из storageState
+   * Результат: 200 OK; у user есть email, у balance — amount
+   */
   test('TC-API-01: current/balance/transactions available with cookie', {
     tag: ['@high', '@api'],
     annotation: [
