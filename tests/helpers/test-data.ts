@@ -26,6 +26,10 @@ export const HTTP_CREATED = 201;
 export const HTTP_BAD_REQUEST = 400;
 export const HTTP_UNAUTHORIZED = 401;
 export const HTTP_UNPROCESSABLE = 422;
+export const HTTP_TOO_MANY_REQUESTS = 429;
+
+/** Имя JWT cookie из authx (deps.JWT_ACCESS_COOKIE_NAME) */
+export const ACCESS_TOKEN_COOKIE = 'access_token';
 
 /** POST login/register — для трекинга сетевых вызовов */
 export const AUTH_API = /\/api\/auth\/(login|register)/;
@@ -49,7 +53,7 @@ export const AMOUNT_WITH_LEADING_ZEROS = '007';
 export const PARSED_LEADING_ZERO_AMOUNT = 7;
 export const BULK_TRANSACTION_COUNT = 30;
 
-/** Сколько неудачных логинов проверяем на отсутствие lockout */
+/** TC-SEC-02: сколько неудачных логинов отправляем, чтобы зафиксировать отсутствие lockout/rate-limit */
 export const FAILED_LOGIN_ATTEMPTS = 10;
 
 export function uniqueEmail(prefix = 'user'): string {

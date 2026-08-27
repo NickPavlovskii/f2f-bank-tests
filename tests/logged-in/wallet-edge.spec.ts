@@ -262,13 +262,15 @@ test.describe('Multi-tab balance', () => {
    * TC-WALLET-01 | Средний
    * Вход: два context с одним user, пополнение в одном
    * Результат: после reload в обоих вкладках баланс совпадает
+   * Примечание: live-sync (websocket/polling) не реализован — только reload
    */
-  test('TC-WALLET-01: balance syncs across tabs after reload', {
+  test('TC-WALLET-01: balance consistent across tabs after reload (no live-sync)', {
     tag: ['@medium', '@edge'],
     annotation: [
       { type: 'priority', description: 'Средний' },
       { type: 'input', description: '2 browser context, fund в первом' },
       { type: 'expected', description: 'после reload баланс одинаковый' },
+      { type: 'note', description: 'websocket/polling между вкладками нет — проверяем только reload' },
     ],
   }, async ({ browser }) => {
     const contextA = await browser.newContext({ storageState: AUTH_FILE });
