@@ -42,6 +42,12 @@ export const TRANSFER_AMOUNT_OVER_BALANCE = 999_999;
 export const INVALID_AMOUNT_ZERO = 0;
 export const INVALID_AMOUNT_NEGATIVE = -10;
 export const INVALID_NON_POSITIVE_AMOUNTS = [INVALID_AMOUNT_ZERO, INVALID_AMOUNT_NEGATIVE] as const;
+export const PARALLEL_TRANSFER_POOL = 100;
+export const TRANSFER_FRACTIONAL_AMOUNT = 33.333;
+export const AMOUNT_OVERFLOW = 9_999_999_999_999;
+export const AMOUNT_WITH_LEADING_ZEROS = '007';
+export const PARSED_LEADING_ZERO_AMOUNT = 7;
+export const BULK_TRANSACTION_COUNT = 30;
 
 /** Сколько неудачных логинов проверяем на отсутствие lockout */
 export const FAILED_LOGIN_ATTEMPTS = 10;

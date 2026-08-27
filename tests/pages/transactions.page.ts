@@ -7,6 +7,7 @@ export class TransactionsPage {
   readonly table: Locator;
   readonly addBalanceButton: Locator;
   readonly modal: Locator;
+  readonly modalOverlay: Locator;
   readonly modalAmountInput: Locator;
   readonly modalAddButton: Locator;
   readonly modalCancelButton: Locator;
@@ -18,6 +19,7 @@ export class TransactionsPage {
     this.table = page.locator('.transactions__table');
     this.addBalanceButton = page.getByRole('button', { name: 'Add balance' });
     this.modal = page.locator('.modal');
+    this.modalOverlay = page.locator('.modal-overlay');
     this.modalAmountInput = this.modal.locator('input[name="balance"]');
     this.modalAddButton = this.modal.getByRole('button', { name: 'Add' });
     this.modalCancelButton = this.modal.getByRole('button', { name: 'Cancel' });
