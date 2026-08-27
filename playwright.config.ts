@@ -1,12 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import { AUTH_FILE } from './tests/helpers/test-data';
 
-/**
- * Проекты:
- * - setup      — один раз логин → playwright/.auth/user.json
- * - logged-out — регистрация, логин, гостевой доступ
- * - logged-in  — logout + API с storageState
- */
 export default defineConfig({
   fullyParallel: false,
   workers: 1,
