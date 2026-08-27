@@ -4,3 +4,7 @@ export type TestUser = {
   email: string;
   password: string;
 };
+
+export interface BalanceResponse {
+  amount: number;
+}

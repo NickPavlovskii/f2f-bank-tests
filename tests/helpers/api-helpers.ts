@@ -39,3 +39,16 @@ export async function apiLogin(request: APIRequestContext, email: string, passwo
     data: { email, password },
   });
 }
+
+export async function apiAddBalance(request: APIRequestContext, amount: number) {
+  return request.post('/api/users/balance/add', { data: { amount } });
+}
+
+export async function apiTransfer(
+  request: APIRequestContext,
+  phone: string,
+  amount: number,
+  purpose: string,
+) {
+  return request.post('/api/users/transfer', { data: { phone, amount, purpose } });
+}

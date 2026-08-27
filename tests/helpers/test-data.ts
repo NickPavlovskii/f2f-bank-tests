@@ -29,6 +29,19 @@ export const HTTP_UNPROCESSABLE = 422;
 
 /** POST login/register — для трекинга сетевых вызовов */
 export const AUTH_API = /\/api\/auth\/(login|register)/;
+/** POST transfer — для трекинга сетевых вызовов */
+export const TRANSFER_API = /\/api\/users\/transfer/;
+
+export const VALID_PHONE = '+7 999 123 45 67';
+export const INVALID_PHONE_NO_PLUS = '79991234567';
+export const INVALID_PHONE_SHORT = '+7123';
+export const TRANSFER_PURPOSE = 'debt repayment';
+export const TOP_UP_AMOUNT = 1000;
+export const TRANSFER_AMOUNT = 100;
+export const TRANSFER_AMOUNT_OVER_BALANCE = 999_999;
+export const INVALID_AMOUNT_ZERO = 0;
+export const INVALID_AMOUNT_NEGATIVE = -10;
+export const INVALID_NON_POSITIVE_AMOUNTS = [INVALID_AMOUNT_ZERO, INVALID_AMOUNT_NEGATIVE] as const;
 
 /** Сколько неудачных логинов проверяем на отсутствие lockout */
 export const FAILED_LOGIN_ATTEMPTS = 10;
