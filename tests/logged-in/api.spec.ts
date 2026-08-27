@@ -7,7 +7,7 @@ import { HTTP_OK } from '../helpers/test-data';
  * request fixture наследует storageState проекта logged-in.
  */
 test.describe('Authenticated API', () => {
-  test('TC-API-01: current/balance/transactions доступны с cookie', {
+  test('TC-API-01: current/balance/transactions available with cookie', {
     tag: ['@high', '@api'],
     annotation: [
       { type: 'priority', description: 'Высокий' },

@@ -14,7 +14,7 @@ test.describe('Registration', () => {
    * Вход: Name, Surname, уникальный email, пароль Qwerty123!
    * Результат: URL `/login`, snackbar Registration successful
    */
-  test('TC-REG-01: успешная регистрация', {
+  test('TC-REG-01: successful registration', {
     tag: ['@critical', '@register'],
     annotation: [
       { type: 'priority', description: 'Критический' },
@@ -36,7 +36,7 @@ test.describe('Registration', () => {
    * Вход: повторная регистрация с тем же email
    * Результат: ошибка already exists, URL `/register`
    */
-  test('TC-REG-02: регистрация с уже занятым email', {
+  test('TC-REG-02: registration with existing email', {
     tag: ['@high', '@register'],
     annotation: [
       { type: 'priority', description: 'Высокий' },
@@ -63,7 +63,7 @@ test.describe('Registration', () => {
    * Вход: пустая форма, нажать Register
    * Результат: остаёмся на `/register`
    */
-  test('TC-REG-03: регистрация с пустыми полями', {
+  test('TC-REG-03: registration with empty fields', {
     tag: ['@medium', '@register'],
     annotation: [
       { type: 'priority', description: 'Средний' },
@@ -84,7 +84,7 @@ test.describe('Registration', () => {
    * Вход: email not-an-email
    * Результат: форма не отправляется, URL `/register`
    */
-  test('TC-REG-04: регистрация с невалидным email', {
+  test('TC-REG-04: registration with invalid email', {
     tag: ['@medium', '@register'],
     annotation: [
       { type: 'priority', description: 'Средний' },

@@ -1,9 +1,8 @@
 import { expect, type Page } from '@playwright/test';
 
 export async function expectSnackbar(page: Page, text: string | RegExp) {
-  const snackbar = page.locator('.snackbar');
+  const snackbar = page.locator('.snackbar').filter({ hasText: text });
   await expect(snackbar).toBeVisible();
-  await expect(snackbar).toContainText(text);
 }
 
 export async function expectHeaderBalance(page: Page, amount?: string | number) {
@@ -31,4 +30,8 @@ export function watchForDialogs(page: Page) {
   return {
     expectNone: () => expect(dialogShown, 'XSS dialog must not appear').toBe(false),
   };
+}
+
+export async function waitSnackbarHidden(page: Page) {
+  await expect(page.locator('.snackbar')).toBeHidden({ timeout: 5000 });
 }

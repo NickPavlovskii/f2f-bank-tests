@@ -8,7 +8,7 @@ test.describe('Guest access', () => {
    * Вход: открыть `/` без cookie сессии
    * Результат: редирект на `/login`
    */
-  test('TC-AUTH-01: гость не попадает на главную', {
+  test('TC-AUTH-01: guest cannot open home page', {
     tag: ['@critical', '@auth'],
     annotation: [
       { type: 'priority', description: 'Критический' },
@@ -25,7 +25,7 @@ test.describe('Guest access', () => {
    * Вход: открыть `/profile` и `/transactions` без авторизации
    * Результат: в обоих случаях редирект на `/login`
    */
-  test('TC-AUTH-02: гость не попадает на профиль и транзакции', {
+  test('TC-AUTH-02: guest cannot open profile and transactions', {
     tag: ['@high', '@auth'],
     annotation: [
       { type: 'priority', description: 'Высокий' },
@@ -45,7 +45,7 @@ test.describe('Guest access', () => {
    * Вход: GET `/api/users/current`, `/balance`, `/transactions` без cookie
    * Результат: ответ 401 Unauthorized для всех трёх эндпоинтов
    */
-  test('TC-AUTH-03: API без cookie возвращает 401', {
+  test('TC-AUTH-03: API returns 401 without cookie', {
     tag: ['@high', '@auth', '@api'],
     annotation: [
       { type: 'priority', description: 'Высокий' },
@@ -55,8 +55,8 @@ test.describe('Guest access', () => {
   }, async ({ request }) => {
     const { currentUser, balance, transactions } = await fetchProtectedUserApis(request);
 
-    expect(currentUser.status()).toBe(HTTP_UNAUTHORIZED);
-    expect(balance.status()).toBe(HTTP_UNAUTHORIZED);
-    expect(transactions.status()).toBe(HTTP_UNAUTHORIZED);
+    expect(currentUser.status(), 'GET /api/users/current').toBe(HTTP_UNAUTHORIZED);
+    expect(balance.status(), 'GET /api/users/balance').toBe(HTTP_UNAUTHORIZED);
+    expect(transactions.status(), 'GET /api/users/transactions').toBe(HTTP_UNAUTHORIZED);
   });
 });

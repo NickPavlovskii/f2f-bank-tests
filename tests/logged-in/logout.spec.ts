@@ -13,7 +13,7 @@ test.describe('Logout', () => {
     await expectHomePage(page);
   });
 
-  test('TC-LOGOUT-01: выход из системы', {
+  test('TC-LOGOUT-01: logout redirects to login', {
     tag: ['@high', '@logout'],
     annotation: [
       { type: 'priority', description: 'Высокий' },
@@ -30,19 +30,17 @@ test.describe('Logout', () => {
     await expect(page).toHaveURL(/\/login/);
   });
 
-  test('TC-LOGOUT-02: кнопка Back после выхода', {
+  /**
+   * TC-LOGOUT-02 | Высокий
+   * Вход: Logout → Back в браузере
+   * Результат: защищённый экран недоступен, URL `/login`
+   */
+  test('TC-LOGOUT-02: browser Back after logout', {
     tag: ['@high', '@logout', '@security'],
     annotation: [
       { type: 'priority', description: 'Высокий' },
-      {
-        type: 'risk',
-        description: 'bfcache: закешированная авторизованная страница после logout через Back',
-      },
       { type: 'input', description: 'Logout → Back в браузере' },
-      {
-        type: 'expected',
-        description: 'защищённый экран недоступен, редирект на /login',
-      },
+      { type: 'expected', description: 'редирект на /login, защищённый экран недоступен' },
     ],
   }, async ({ page }) => {
     const header = new HeaderPage(page);
