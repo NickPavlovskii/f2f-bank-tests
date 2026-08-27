@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { fetchProtectedUserApis } from '../helpers/api-helpers';
-import { HTTP_UNAUTHORIZED } from '../helpers/test-data';
+import { apiTransfer, fetchProtectedUserApis } from '../helpers/api-helpers';
+import { HTTP_UNAUTHORIZED, TRANSFER_AMOUNT, TRANSFER_PURPOSE, VALID_PHONE } from '../helpers/test-data';
 
 test.describe('Guest access', () => {
   /**
@@ -58,5 +58,22 @@ test.describe('Guest access', () => {
     expect(currentUser.status(), 'GET /api/users/current').toBe(HTTP_UNAUTHORIZED);
     expect(balance.status(), 'GET /api/users/balance').toBe(HTTP_UNAUTHORIZED);
     expect(transactions.status(), 'GET /api/users/transactions').toBe(HTTP_UNAUTHORIZED);
+  });
+
+  /**
+   * TC-TR-07 | Высокий
+   * Вход: POST /api/users/transfer без cookie
+   * Результат: 401 Unauthorized
+   */
+  test('TC-TR-07: transfer API without cookie returns 401', {
+    tag: ['@high', '@transfer', '@api', '@auth'],
+    annotation: [
+      { type: 'priority', description: 'Высокий' },
+      { type: 'input', description: 'POST /api/users/transfer без cookie' },
+      { type: 'expected', description: '401 Unauthorized' },
+    ],
+  }, async ({ request }) => {
+    const response = await apiTransfer(request, VALID_PHONE, TRANSFER_AMOUNT, TRANSFER_PURPOSE);
+    expect(response.status(), 'POST /api/users/transfer').toBe(HTTP_UNAUTHORIZED);
   });
 });

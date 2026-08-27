@@ -1,15 +1,25 @@
 import { execFile } from 'node:child_process';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { promisify } from 'node:util';
 import { expect, type Page } from '@playwright/test';
 import { LoginPage } from '../pages/login.page';
 import { RegisterPage } from '../pages/register.page';
-import { defaultUser } from './test-data';
+import { defaultUser, SETUP_USER_FILE } from './test-data';
 import type { TestUser } from './types';
 
 export { defaultUser, uniqueEmail } from './test-data';
 export type { TestUser } from './types';
 
 const execFileAsync = promisify(execFile);
+export function saveSetupUser(user: TestUser): void {
+  mkdirSync(dirname(SETUP_USER_FILE), { recursive: true });
+  writeFileSync(SETUP_USER_FILE, JSON.stringify(user), 'utf-8');
+}
+
+export function loadSetupUser(): TestUser {
+  return JSON.parse(readFileSync(SETUP_USER_FILE, 'utf-8')) as TestUser;
+}
 
 /**
  * Регистрация нового пользователя
