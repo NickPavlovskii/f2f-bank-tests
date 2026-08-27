@@ -1,5 +1,6 @@
 import { apiAddBalance, getBalance } from '../helpers/api-helpers';
 import { expectHeaderBalance } from '../helpers/assertions';
+import { expectAddBalanceRejectsNonPositiveAmount } from '../helpers/amount-validation';
 import { test, expect } from '../helpers/fixtures';
 import {
   HTTP_OK,
@@ -52,13 +53,12 @@ test.describe('Add balance', () => {
       ],
     }, async ({ page, request, balanceBefore }) => {
       const transactionsPage = new TransactionsPage(page);
-
-      await transactionsPage.openAddBalanceModal();
-      await transactionsPage.modalAmountInput.fill(String(amount));
-      await transactionsPage.modalAddButton.click();
-      await expect(transactionsPage.modal).toBeVisible();
-
-      expect(await readApiBalance(request)).toBe(balanceBefore);
+      await expectAddBalanceRejectsNonPositiveAmount(
+        transactionsPage,
+        request,
+        balanceBefore,
+        amount,
+      );
     });
   }
 

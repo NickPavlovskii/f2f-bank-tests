@@ -207,14 +207,20 @@ test.describe('Transactions edge cases', () => {
   /**
    * TC-TX-06 | Средний
    * Вход: 30 deposit через API
-   * Результат: все 30 строк в таблице (пагинации нет)
+   * Результат: все 30 строк в таблице (пагинации нет на 28.2026)
+   * @fragile-if-pagination-added — падение после внедрения пагинации ожидаемо, не баг
    */
   test('TC-TX-06: many transactions are all listed without pagination', {
-    tag: ['@medium', '@transactions', '@edge'],
+    tag: ['@medium', '@transactions', '@edge', '@fragile-if-pagination-added'],
     annotation: [
       { type: 'priority', description: 'Средний' },
       { type: 'input', description: `${BULK_TRANSACTION_COUNT} deposits` },
-      { type: 'expected', description: 'все строки в таблице' },
+      { type: 'expected', description: 'все строки в таблице (без пагинации на 08.2026)' },
+      {
+        type: 'fragile',
+        description:
+          'при добавлении пагинации тест упадёт ожидаемо — обновить на проверку первой страницы / total count',
+      },
     ],
   }, async ({ page, request }) => {
     await clearSession(page);

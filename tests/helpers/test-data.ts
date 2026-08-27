@@ -56,8 +56,20 @@ export const BULK_TRANSACTION_COUNT = 30;
 /** TC-SEC-02: сколько неудачных логинов отправляем, чтобы зафиксировать отсутствие lockout/rate-limit */
 export const FAILED_LOGIN_ATTEMPTS = 10;
 
+/** XSS payload для purpose (stored XSS, если поле появится в Transactions) */
+export const XSS_PURPOSE_PAYLOAD = '<script>alert(1)</script>';
+/** Unicode в полях профиля (TC-PR-04) */
+export const UNICODE_USER_NAME = 'Ник';
+export const UNICODE_USER_SURNAME = 'Павлов';
+
 export function uniqueEmail(prefix = 'user'): string {
   return `${prefix}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}@test.com`;
+}
+
+/** Email с plus-алиасом (TC-REG-02): user+alias@test.com */
+export function uniqueEmailWithPlusAlias(prefix = 'user'): string {
+  const [local, domain] = uniqueEmail(prefix).split('@');
+  return `${local}+alias@${domain}`;
 }
 
 export function defaultUser(overrides: Partial<TestUser> = {}): TestUser {

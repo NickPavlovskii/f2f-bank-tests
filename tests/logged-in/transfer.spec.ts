@@ -1,9 +1,11 @@
-import { expectSnackbar } from '../helpers/assertions';
+import { expectSnackbar, watchForDialogs } from '../helpers/assertions';
+import {
+  expectTransferRejectsEmptyAmount,
+  expectTransferRejectsNonPositiveAmounts,
+} from '../helpers/amount-validation';
 import { test, expect } from '../helpers/fixtures';
 import { trackTransferApiCalls } from '../helpers/network-helpers';
 import {
-  INVALID_AMOUNT_NEGATIVE,
-  INVALID_AMOUNT_ZERO,
   INVALID_PHONE_NO_PLUS,
   INVALID_PHONE_SHORT,
   TOP_UP_AMOUNT,
@@ -11,6 +13,7 @@ import {
   TRANSFER_AMOUNT_OVER_BALANCE,
   TRANSFER_PURPOSE,
   VALID_PHONE,
+  XSS_PURPOSE_PAYLOAD,
 } from '../helpers/test-data';
 import { fundBalanceAndReload, readApiBalance, readHeaderBalance } from '../helpers/wallet-helpers';
 import { TransactionsPage } from '../pages/transactions.page';
@@ -109,18 +112,19 @@ test.describe('Transfer', () => {
     const api = trackTransferApiCalls(page);
 
     try {
-      await transferPage.transfer(VALID_PHONE, INVALID_AMOUNT_ZERO, TRANSFER_PURPOSE);
-      await expectSnackbar(page, 'Amount must be greater than zero');
-      await api.expectNone();
-
-      await transferPage.transfer(VALID_PHONE, INVALID_AMOUNT_NEGATIVE, TRANSFER_PURPOSE);
-      await expectSnackbar(page, 'Amount must be greater than zero');
-      await api.expectNone();
-
-      await transferPage.fill(VALID_PHONE, '', TRANSFER_PURPOSE);
-      await transferPage.submit();
-      await expect(transferPage.amountInput).toHaveJSProperty('validity.valueMissing', true);
-      await api.expectNone();
+      await expectTransferRejectsNonPositiveAmounts(
+        page,
+        transferPage,
+        api,
+        VALID_PHONE,
+        TRANSFER_PURPOSE,
+      );
+      await expectTransferRejectsEmptyAmount(
+        transferPage,
+        api,
+        VALID_PHONE,
+        TRANSFER_PURPOSE,
+      );
     } finally {
       api.dispose();
     }
@@ -200,5 +204,38 @@ test.describe('Transfer', () => {
     await transferPage.newTransferButton.click();
     await transferPage.expectFormVisible();
     await transferPage.expectFormEmpty();
+  });
+
+  /**
+   * TC-TR-13 | Средний | stored XSS guard
+   * Вход: purpose с HTML/script payload
+   * Результат: нет JS-диалога; payload не рендерится как HTML в Transactions
+   * Примечание: purpose не сохраняется в transaction (28.2026) — тест на будущее
+   */
+  test('TC-TR-13: XSS payload in purpose does not execute', {
+    tag: ['@medium', '@transfer', '@security'],
+    annotation: [
+      { type: 'priority', description: 'Средний' },
+      { type: 'input', description: `purpose ${XSS_PURPOSE_PAYLOAD}` },
+      { type: 'expected', description: 'нет alert, нет <script> в DOM таблицы' },
+      {
+        type: 'note',
+        description: 'purpose не отображается в Transactions сейчас — проверяем отсутствие XSS при transfer',
+      },
+    ],
+  }, async ({ page, request }) => {
+    await fundBalanceAndReload(page, request, TOP_UP_AMOUNT);
+
+    const dialogGuard = watchForDialogs(page);
+    const transferPage = new TransferPage(page);
+    await transferPage.transfer(VALID_PHONE, TRANSFER_AMOUNT, XSS_PURPOSE_PAYLOAD);
+    await transferPage.expectSuccess();
+
+    const transactionsPage = new TransactionsPage(page);
+    await transactionsPage.goto();
+
+    dialogGuard.expectNone();
+    await expect(page.locator('.transactions__table')).not.toContainText('<script>');
+    await expect(page.locator('.transactions__table')).not.toContainText('alert(1)');
   });
 });
