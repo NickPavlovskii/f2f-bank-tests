@@ -2,17 +2,17 @@ import { test, expect } from '@playwright/test';
 import { expectHomePage } from '../helpers/assertions';
 import { HeaderPage } from '../pages/header.page';
 
-/**
- * Использует storageState из login.setup.ts.
- * Каждый тест получает новый browser context с копией cookies —
- * logout в одном тесте не ломает соседние.
- */
 test.describe('Logout', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await expectHomePage(page);
   });
 
+  /**
+   * TC-LOGOUT-01 | Высокий
+   * Вход: авторизованный пользователь (storageState), нажать Logout
+   * Результат: редирект на `/login`; повторный заход на `/` снова на `/login`
+   */
   test('TC-LOGOUT-01: logout redirects to login', {
     tag: ['@high', '@logout'],
     annotation: [

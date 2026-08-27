@@ -2,10 +2,6 @@ import { test, expect } from '@playwright/test';
 import { fetchProtectedUserApis } from '../helpers/api-helpers';
 import { HTTP_OK } from '../helpers/test-data';
 
-/**
- * API под авторизованной сессией (cookies из storageState).
- * request fixture наследует storageState проекта logged-in.
- */
 test.describe('Authenticated API', () => {
   test('TC-API-01: current/balance/transactions available with cookie', {
     tag: ['@high', '@api'],

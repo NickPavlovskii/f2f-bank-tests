@@ -20,7 +20,13 @@ export const CSS_INJECTION_EMAIL = 'test@test.com"><style>body{display:none}</st
 
 /** HTTP-статусы ответов API */
 export const HTTP_OK = 200;
+export const HTTP_CREATED = 201;
+export const HTTP_BAD_REQUEST = 400;
 export const HTTP_UNAUTHORIZED = 401;
+export const HTTP_UNPROCESSABLE = 422;
+
+/** Сколько неудачных логинов проверяем на отсутствие lockout */
+export const FAILED_LOGIN_ATTEMPTS = 10;
 
 export function uniqueEmail(prefix = 'user'): string {
   return `${prefix}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}@test.com`;
