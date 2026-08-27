@@ -1,8 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { getCurrentUser } from '../helpers/api-helpers';
-import { loadSetupUser } from '../helpers/auth-helpers';
-import { HTTP_OK } from '../helpers/test-data';
-import { ProfilePage } from '../pages/profile.page';
+import { clearSession, loadSetupUser, registerAndLogin } from '../helpers/auth-helpers';
+import { HTTP_OK, UNICODE_USER_NAME, UNICODE_USER_SURNAME } from '../helpers/test-data';import { ProfilePage } from '../pages/profile.page';
 
 test.describe('Profile', () => {
   /**
@@ -68,6 +67,38 @@ test.describe('Profile', () => {
     expect(body).toMatchObject({
       name: user.name,
       surname: user.surname,
+      email: user.email,
+    });
+  });
+
+  /**
+   * TC-PR-04 | Средний
+   * Вход: регистрация с unicode в Name/Surname
+   * Результат: в /profile и API те же значения без искажений
+   */
+  test('TC-PR-04: unicode name and surname are preserved in profile', {
+    tag: ['@medium', '@profile'],
+    annotation: [
+      { type: 'priority', description: 'Средний' },
+      { type: 'input', description: `name ${UNICODE_USER_NAME}, surname ${UNICODE_USER_SURNAME}` },
+      { type: 'expected', description: 'unicode сохранён в UI и API' },
+    ],
+  }, async ({ page }) => {
+    await clearSession(page);
+    const user = await registerAndLogin(page, {
+      name: UNICODE_USER_NAME,
+      surname: UNICODE_USER_SURNAME,
+    });
+
+    const profilePage = new ProfilePage(page);
+    await profilePage.goto();
+    await profilePage.expectUser(user);
+
+    const response = await page.request.get('/api/users/current');
+    expect(response.status()).toBe(HTTP_OK);
+    expect(await response.json()).toMatchObject({
+      name: UNICODE_USER_NAME,
+      surname: UNICODE_USER_SURNAME,
       email: user.email,
     });
   });

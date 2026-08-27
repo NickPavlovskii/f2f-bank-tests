@@ -5,9 +5,12 @@ import {
   ACCESS_TOKEN_COOKIE,
   defaultUser,
   FAILED_LOGIN_ATTEMPTS,
+  HTTP_BAD_REQUEST,
   HTTP_CREATED,
   HTTP_TOO_MANY_REQUESTS,
   HTTP_UNAUTHORIZED,
+  HTTP_UNPROCESSABLE,
+  VALID_PHONE,
   WRONG_PASSWORD,
 } from '../helpers/test-data';
 import { LoginPage } from '../pages/login.page';
@@ -73,5 +76,34 @@ test.describe('Security', () => {
 
     expect(statuses.every((status) => status === HTTP_UNAUTHORIZED)).toBe(true);
     expect(statuses).not.toContain(HTTP_TOO_MANY_REQUESTS);
+  });
+
+  /**
+   * TC-SEC-03 | Средний
+   * Вход: POST /transfer с Content-Type: text/plain вместо application/json
+   * Результат: 422 или 400 — API не принимает неверный Content-Type
+   */
+  test('TC-SEC-03: transfer API rejects text/plain Content-Type', {
+    tag: ['@medium', '@security', '@transfer', '@api'],
+    annotation: [
+      { type: 'priority', description: 'Средний' },
+      { type: 'input', description: 'POST /transfer, Content-Type: text/plain' },
+      { type: 'expected', description: '422 или 400' },
+    ],
+  }, async ({ request }) => {
+    const user = defaultUser();
+    await apiRegister(request, user);
+    await apiLogin(request, user.email, user.password);
+
+    const response = await request.post('/api/users/transfer', {
+      headers: { 'Content-Type': 'text/plain' },
+      data: JSON.stringify({
+        phone: VALID_PHONE,
+        amount: 1,
+        purpose: 'test',
+      }),
+    });
+
+    expect([HTTP_UNPROCESSABLE, HTTP_BAD_REQUEST]).toContain(response.status());
   });
 });
