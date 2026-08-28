@@ -1,162 +1,39 @@
-# F2F Bank - Тестовое задание
+# F2F Bank — Playwright E2E
 
-F2F Bank - простое веб-приложение, имитирующее сервис переводов между пользователями в стиле СБП. Пользователи могут регистрироваться, входить в систему, пополнять баланс и отправлять переводы по номеру телефона.
+End-to-end тесты для [F2F Bank](http://localhost): регистрация, авторизация, переводы, баланс, транзакции, edge- и security-сценарии.
 
-Этот репозиторий предоставляется как **тестовое задание**: ваша задача - написать end-to-end тесты с помощью [Playwright](https://playwright.dev/).
-
----
-
-## Как выполнить и сдать задание
-
-1. **Создайте публичный репозиторий** на GitHub в своем профиле (например, `f2f-bank-tests`).
-
-2. **Скопируйте код проекта** в свой репозиторий:
-   ```bash
-   git clone <ссылка-на-этот-репозиторий> f2f-bank-tests
-   cd f2f-bank-tests
-   git remote set-url origin https://github.com/<ваш-логин>/f2f-bank-tests.git
-   git push -u origin main
-   ```
-
-3. **Добавьте тесты** - инициализируйте Playwright и напишите тест-кейсы (подробнее в разделе «Тестовое задание» ниже).
-
-4. **Замените этот README** на свой собственный, в котором опишите:
-   - как запустить приложение
-   - как запустить тесты
-   - краткое описание написанных сценариев и их приоритеты
-
-5. **Запушьте результат** в свой репозиторий.
-
-6. **Пришлите ссылку** на репозиторий - это и будет вашим итоговым ответом.
+**Автор:** Nick Pavlovskij (`npavlovskij`)
 
 ---
 
-## Предварительные требования
+## Требования
 
-Перед началом работы убедитесь, что на вашем компьютере установлены следующие инструменты:
-
-| Инструмент | Версия | Как проверить |
-|------------|--------|---------------|
-| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | любая актуальная | `docker --version` |
-| [Docker Compose](https://docs.docker.com/compose/) | v2+ | `docker compose version` |
-| [Node.js](https://nodejs.org/) | 18+ | `node --version` |
-| [Git](https://git-scm.com/) | любая | `git --version` |
-
-> **Пользователям Windows:** используйте PowerShell или Git Bash для всех команд ниже.
-
----
-
-## Установка Docker на Windows (WSL 2)
-
-Docker Desktop на Windows работает через **WSL 2** (Windows Subsystem for Linux). Если вы видите ошибку `Docker Desktop - WSL not installed` - выполните шаги ниже.
-
-### Шаг 1. Включите WSL
-
-Откройте **PowerShell от имени администратора** (правая кнопка мыши → «Запуск от имени администратора») и выполните:
-
-```powershell
-wsl --install
-```
-
-Эта команда автоматически:
-- включит компонент WSL
-- установит Ubuntu как дистрибутив по умолчанию
-
-**Перезагрузите компьютер** после завершения установки.
-
-> Если команда `wsl --install` не работает (старая версия Windows), включите WSL вручную:
-> ```powershell
-> dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-> dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-> ```
-> После этого перезагрузитесь и установите WSL 2 kernel update:
-> [Скачать обновление ядра WSL 2](https://aka.ms/wsl2kernel)
-
-### Шаг 2. Установите WSL 2 как версию по умолчанию
-
-После перезагрузки снова откройте PowerShell **от имени администратора**:
-
-```powershell
-wsl --set-default-version 2
-```
-
-Проверьте, что WSL работает:
-
-```powershell
-wsl --list --verbose
-```
-
-Должны увидеть Ubuntu со статусом `Running` и версией `2`.
-
-### Шаг 3. Установите Docker Desktop
-
-1. Скачайте [Docker Desktop для Windows](https://www.docker.com/products/docker-desktop/)
-2. Запустите установщик и следуйте инструкциям
-3. На экране настройки убедитесь, что отмечен пункт **«Use WSL 2 instead of Hyper-V»**
-4. После установки **перезагрузите компьютер**
-
-### Шаг 4. Запустите Docker Desktop
-
-- Откройте Docker Desktop из меню «Пуск»
-- Дождитесь, пока в трее появится иконка Docker (кит) и статус сменится на **«Engine running»**
-- Только после этого выполняйте команды `docker compose`
-
-### Шаг 5. Проверьте установку
-
-```powershell
-docker --version
-docker compose version
-```
-
-Обе команды должны вернуть версию без ошибок. Если все работает - переходите к разделу **«Запуск приложения»**.
-
-### Частые проблемы
-
-| Ошибка | Решение |
-|--------|---------|
-| `WSL not installed` | Выполните `wsl --install` в PowerShell **от администратора** и перезагрузитесь |
-| `Cannot connect to the Docker daemon` | Docker Desktop не запущен - откройте его из меню «Пуск» и дождитесь старта |
-| `Hardware assisted virtualization... is not enabled` | Включите виртуализацию в BIOS/UEFI (пункт Intel VT-x или AMD-V) |
-| После `wsl --install` Ubuntu не открывается | Установите Ubuntu вручную из [Microsoft Store](https://aka.ms/wslubuntu) |
+| Инструмент | Версия |
+|------------|--------|
+| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | актуальная |
+| [Node.js](https://nodejs.org/) | 18+ |
+| Git | любая |
 
 ---
 
 ## Запуск приложения
 
-### 1. Клонируйте репозиторий
-
 ```bash
 git clone <ссылка-на-репозиторий>
-cd <папка-репозитория>
-```
+cd f2f-bank-tests
 
-### 2. Запустите все сервисы
-
-```bash
 docker compose up -d --build
 ```
 
-Команда собирает и запускает четыре контейнера:
-- **database** - PostgreSQL
-- **app** - бэкенд на Python/FastAPI (порт 8080 внутри сети)
-- **client** - фронтенд на Vue.js (статическая сборка)
-- **web-proxy** - Nginx, раздает все на **http://localhost**
+Приложение доступно по адресу **http://localhost**.
 
-Первая сборка может занять 2–5 минут. Последующие запуски - быстрее.
-
-### 3. Откройте приложение
-
-Перейдите по адресу **http://localhost** в браузере.
-
-Вы должны увидеть страницу входа F2F Bank.
-
-### 4. Остановка приложения
+Остановка:
 
 ```bash
 docker compose down
 ```
 
-Полный сброс вместе с данными базы данных:
+Сброс данных БД:
 
 ```bash
 docker compose down -v
@@ -164,81 +41,94 @@ docker compose down -v
 
 ---
 
-## Обзор приложения
+## Запуск тестов
 
-После запуска приложение предоставляет следующий функционал:
+Установка зависимостей (один раз):
 
-| Функция | URL | Описание |
-|---------|-----|----------|
-| Регистрация | `/register` | Создать аккаунт (имя, фамилия, email, пароль) |
-| Вход | `/login` | Войти по email и паролю |
-| Главная / Перевод | `/` | Отправить перевод по номеру телефона, сумме и назначению |
-| Транзакции | `/transactions` | История транзакций; пополнение баланса |
-| Профиль | `/profile` | Просмотр имени, фамилии и email |
+```bash
+npm install
+npx playwright install chromium
+```
 
-### Правила валидации
-- **Номер телефона:** должен начинаться с `+`, всего 10–15 цифр (пробелы, дефисы и скобки допускаются). Пример: `+7 999 123-45-67`
-- **Сумма перевода:** должна быть больше нуля
-- **Баланс:** должен быть достаточным для совершения перевода
+### Основные команды
+
+| Команда | Описание |
+|---------|----------|
+| `npm test` | полный прогон (67 тестов) |
+| `npm run test:ui` | UI-режим Playwright (отладка) |
+| `npm run test:report` | HTML-отчёт после прогона |
+| `npm run test:smoke` | только `@critical` |
+| `npm run test:high` | `@critical` + `@high` |
+| `npm run test:auth` | проект `logged-out` |
+| `npm run test:logged-in` | setup + авторизованные тесты |
+
+Пример:
+
+```bash
+docker compose up -d
+npm test
+npm run test:report
+```
+
+### Структура Playwright
+
+| Project | Назначение |
+|---------|------------|
+| `setup` | регистрация + login → `playwright/.auth/user.json` |
+| `logged-out` | гостевые сценарии, login, register, validation, security |
+| `logged-in` | сценарии с `storageState` (transfer, balance, profile и др.) |
+
+Конфигурация: `playwright.config.ts` — TypeScript, Chromium, `baseURL: 'http://localhost'`.
 
 ---
 
-## Тестовое задание
+## Сценарии и приоритеты
 
-### Ваша задача
+**67 автотестов**, **64 тест-кейса** в `NOTES.md` (№1–№64).
 
-Напишите **end-to-end тесты с использованием Playwright**, покрывающие основные пользовательские сценарии.
+Приоритеты: **Критический** → **Высокий** → **Средний** → **Низкий**.
 
-### Настройка
+| Область | Файл | Ключевые TC | Приоритет |
+|---------|------|-------------|-----------|
+| Регистрация | `register.spec.ts` | TC-REG-01, TC-REG-02 (+alias) | Критический / Средний |
+| Логин | `login.spec.ts` | TC-LOGIN-01…12 | Критический / Высокий / Средний |
+| Гостевой доступ | `auth.spec.ts` | TC-AUTH-01…03, TC-TR-07 | Критический / Высокий |
+| Валидация FE/BE | `validation.spec.ts` | TC-VAL-FE/B E-UI/API | Средний / Высокий |
+| Logout | `logout.spec.ts` | TC-LOGOUT-01…02 | Высокий |
+| API | `api.spec.ts` | TC-API-01 | Высокий |
+| Профиль | `profile.spec.ts` | TC-PR-01…04 (unicode) | Высокий / Средний |
+| Навигация | `nav.spec.ts` | TC-NAV-01…02 | Средний / Высокий |
+| Transfer | `transfer.spec.ts` | TC-TR-01…06, TC-TR-13 (XSS) | Критический / Высокий / Средний |
+| Balance | `balance.spec.ts` | TC-BAL-01…04 | Критический / Высокий / Средний |
+| Transactions | `transactions.spec.ts` | TC-TX-01…04 | Высокий / Средний |
+| Wallet edge | `wallet-edge.spec.ts` | TC-TR-08…12, TC-BAL-05, TC-TX-05…07, TC-WALLET-01 | Высокий / Средний / Низкий |
+| Security | `security.spec.ts` | TC-SEC-01…03 | Высокий / Средний |
 
-Инициализируйте проект Playwright в корне репозитория (или в отдельной папке `tests/`):
+Полное описание каждого кейса (шаги, входные данные, ожидаемый результат) — в **[NOTES.md](./NOTES.md)**.
 
-```bash
-npm init playwright@latest
-```
+### Находки
 
-Выберите **TypeScript**, браузер **Chromium** (минимум) и укажите `baseURL: 'http://localhost'` в файле `playwright.config.ts`.
+Подтверждённые баги и security gaps — в **[BUGS.md](./BUGS.md)**:
 
-### Сценарии для покрытия
+| ID | Суть | Тест |
+|----|------|------|
+| BUG-01 | Back после logout → bfcache `/` | TC-LOGOUT-02 (fails) |
+| BUG-02 | Cookie `access_token` без HttpOnly | TC-SEC-01 (fails) |
+| GAP-SEC-01 | Нет rate limiting на login | TC-SEC-02 (documenting) |
 
-Самостоятельно исследуйте приложение и определите тест-кейсы.
-
-Для каждого выявленного сценария:
-
-1. **Опишите** что тестируется (функциональность, входные данные, ожидаемый результат)
-2. **Присвойте уровень критичности** - например: `Критический`, `Высокий`, `Средний`, `Низкий`
-3. **Реализуйте** его как Playwright-тест
-
-Единственно верного списка не существует - часть задания состоит в том, чтобы продемонстрировать способность анализировать приложение и расставлять приоритеты.
-
----
-
-### Советы
-
-- Каждый тест, требующий авторизованного пользователя, должен выполнять вход в начале (или использовать `storageState` для переиспользования).
-- Используйте `beforeEach` / `beforeAll` для общих шагов настройки внутри одного файла.
-- Запуск тестов:
-
-```bash
-npx playwright test
-```
-
-Запуск в UI-режиме (визуальный, удобен для отладки):
-
-```bash
-npx playwright test --ui
-```
-
-Генерация отчета после прогона:
-
-```bash
-npx playwright show-report
-```
+Ожидаемый результат полного прогона: **64 passed / 3 failed** (падающие тесты документируют BUG-01 и BUG-02).
 
 ---
 
-### Что нужно сдать
+## Структура тестов
 
-1. Все файлы с тестами (например, `tests/*.spec.ts`)
-2. `playwright.config.ts`
-3. Краткое описание (в комментариях или отдельном файле `NOTES.md`) найденных багов или неожиданного поведения приложения
+```
+tests/
+  helpers/       # api, auth, wallet, amount-validation, fixtures
+  pages/         # Page Object Model
+  logged-out/    # auth, login, register, validation, security
+  logged-in/     # transfer, balance, transactions, profile, nav, wallet-edge
+playwright.config.ts
+NOTES.md         # тест-кейсы
+BUGS.md          # баги и gaps
+```
